@@ -16,6 +16,8 @@ const (
 	yellow = "\033[33m"
 )
 
+const saveFilePath = "savegame.json"
+
 func Menu(player *personage.Player) {
 	for {
 		clearScreen()
@@ -46,7 +48,7 @@ func Menu(player *personage.Player) {
 		case 3:
 			player.DisplayInfo()
 		case 4:
-			ChargerPartie()
+			ChargerPartie(player)
 		case 5:
 			fmt.Println(green + "  À bientôt, aventurier." + reset)
 			return
@@ -73,11 +75,28 @@ func NouvellePartie(player *personage.Player) {
 	StartAdventure(player)
 }
 
-func ChargerPartie() {
+func ChargerPartie(player *personage.Player) {
 	clearScreen()
 	printSceneHeader("CHARGER UNE PARTIE", "Sauvegarde")
-	fmt.Println("  Aucune sauvegarde disponible pour le moment.")
+
+	loaded, err := personage.LoadPlayer(saveFilePath)
+	if err != nil {
+		fmt.Println("  Aucune sauvegarde disponible pour le moment.")
+		waitForEnter()
+		return
+	}
+
+	*player = loaded
+	fmt.Println("  Sauvegarde chargée. Reprise de l'aventure de", player.Name+".")
 	waitForEnter()
+	ResumeAdventure(player)
+}
+
+// saveGame writes the current player state to disk, used as an auto-save checkpoint.
+func saveGame(player *personage.Player) {
+	if err := player.Save(saveFilePath); err != nil {
+		fmt.Println(red + "  Impossible de sauvegarder la partie." + reset)
+	}
 }
 
 func clearScreen() {

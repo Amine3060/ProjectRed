@@ -1,7 +1,9 @@
 package personage
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	competences "projectred/competences"
@@ -25,9 +27,12 @@ type Player struct {
 	XP             int
 	MaxXP          int
 	SkillPoints    int
+	Gold           int
 	EquippedWeapon string
 	Spells         []string
 	Skills         *competences.SkillTree
+	Inventory      []string
+	Progress       int
 }
 
 func NewPlayer() Player {
@@ -41,9 +46,11 @@ func NewPlayer() Player {
 		XP:             0,
 		MaxXP:          100,
 		SkillPoints:    3,
+		Gold:           0,
 		EquippedWeapon: "Aucune",
 		Spells:         []string{"Fireball"},
 		Skills:         competences.NewSkillTree(),
+		Inventory:      []string{},
 	}
 }
 
@@ -76,6 +83,28 @@ func (p *Player) OpenSkillsMenu() {
 	p.Skills.InteractiveMenu(p.Name, &p.SkillPoints)
 }
 
+// Save writes the player's state to a JSON file.
+func (p *Player) Save(path string) error {
+	data, err := json.MarshalIndent(p, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, data, 0644)
+}
+
+// LoadPlayer reads a player's state from a JSON save file.
+func LoadPlayer(path string) (Player, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return Player{}, err
+	}
+	var p Player
+	if err := json.Unmarshal(data, &p); err != nil {
+		return Player{}, err
+	}
+	return p, nil
+}
+
 func (p Player) DisplayInfo() {
 	fmt.Println()
 	fmt.Println("  " + cyan + "┌──────────────────────────────────────┐" + reset)
@@ -91,15 +120,24 @@ func (p Player) DisplayInfo() {
 	fmt.Printf("  Mana                %s %d/%d\n", healthBar(p.Mana, p.MaxMana), p.Mana, p.MaxMana)
 	fmt.Printf("  XP                  %s %d/%d\n", healthBar(p.XP, p.MaxXP), p.XP, p.MaxXP)
 	fmt.Println("  Points de compétence", p.SkillPoints)
+	fmt.Println("  Or                  ", p.Gold)
 	fmt.Println()
 	fmt.Println("  " + dim + "Équipement" + reset)
 	fmt.Println("  Arme équipée        ", p.EquippedWeapon)
 	fmt.Println("  Sorts               ", strings.Join(p.Spells, ", "))
+	fmt.Println("  Inventaire          ", inventoryOrNone(p.Inventory))
 	fmt.Println()
 	if p.Skills != nil {
 		p.Skills.DisplaySkills()
 	}
 	fmt.Println()
+}
+
+func inventoryOrNone(inventory []string) string {
+	if len(inventory) == 0 {
+		return "Vide"
+	}
+	return strings.Join(inventory, ", ")
 }
 
 func healthBar(current int, maximum int) string {
