@@ -23,16 +23,17 @@ func Menu(player *personage.Player) {
 		fmt.Println("  ", bold+"MENU PRINCIPAL"+reset)
 		fmt.Println()
 		fmt.Println("  "+cyan+"[1]"+reset, "Nouvelle partie")
-		fmt.Println("  "+cyan+"[2]"+reset, "Personnage")
-		fmt.Println("  "+cyan+"[3]"+reset, "Charger une partie")
-		fmt.Println("  "+red+"[4]"+reset, "Quitter")
+		fmt.Println("  "+cyan+"[2]"+reset, "Compétences")
+		fmt.Println("  "+cyan+"[3]"+reset, "Personnage")
+		fmt.Println("  "+cyan+"[4]"+reset, "Charger une partie")
+		fmt.Println("  "+red+"[5]"+reset, "Quitter")
 		fmt.Println()
 		fmt.Println("  " + dim + "----------------------------------------" + reset)
 		fmt.Print("  " + yellow + "> " + reset)
 
 		var choice int
 		if _, err := fmt.Scanln(&choice); err != nil {
-			fmt.Println(red + "  Entrez un nombre entre 1 et 4." + reset)
+			fmt.Println(red + "  Entrez un nombre entre 1 et 5." + reset)
 			waitForEnter()
 			continue
 		}
@@ -41,14 +42,16 @@ func Menu(player *personage.Player) {
 		case 1:
 			NouvellePartie(player)
 		case 2:
-			player.DisplayInfo()
+			player.OpenSkillsMenu()
 		case 3:
-			ChargerPartie()
+			player.DisplayInfo()
 		case 4:
+			ChargerPartie()
+		case 5:
 			fmt.Println(green + "  À bientôt, aventurier." + reset)
 			return
 		default:
-			fmt.Println(red + "  Choix incorrect. Sélectionnez une option de 1 à 4." + reset)
+			fmt.Println(red + "  Choix incorrect. Sélectionnez une option de 1 à 5." + reset)
 			waitForEnter()
 		}
 	}

@@ -9,20 +9,20 @@ import (
 type Category string
 
 const (
-	CombatCategory    Category = "COMBAT"
-	SurvieCategory    Category = "SURVIE"
-	TechnologieCategory Category = "TECHNOLOGIE"
+	CombatCategory        Category = "COMBAT"
+	SurvieCategory        Category = "SURVIE"
+	TechnologieCategory   Category = "TECHNOLOGIE"
 )
 
 type Skill struct {
-	ID             string
-	Name           string
-	Category       Category
-	Description    string
-	Cost           int
-	Prerequisites  []string
-	Purchased      bool
-	Bonus          string
+	ID            string
+	Name          string
+	Category      Category
+	Description   string
+	Cost          int
+	Prerequisites []string
+	Purchased     bool
+	Bonus         string
 }
 
 type SkillTree struct {
@@ -155,4 +155,121 @@ func (tree *SkillTree) DisplaySkills() {
 			fmt.Printf("    %s %s - %s%s\n", status, skill.Name, skill.Bonus, prereqs)
 		}
 	}
+}
+
+func (tree *SkillTree) InteractiveMenu(playerName string, points *int) {
+	if points == nil {
+		fmt.Println("  Aucun point de compétence disponible.")
+		return
+	}
+
+	for {
+		fmt.Println()
+		fmt.Println("  ┌──────────────────────────────────────┐")
+		fmt.Printf("  │ %-36s │\n", "COMPETENCES")
+		fmt.Printf("  │ %-36s │\n", "Joueur : "+playerName)
+		fmt.Printf("  │ %-36s │\n", fmt.Sprintf("Points : %d", *points))
+		fmt.Println("  └──────────────────────────────────────┘")
+		fmt.Println()
+		fmt.Println("  [1] COMBAT")
+		fmt.Println("  [2] SURVIE")
+		fmt.Println("  [3] TECHNOLOGIE")
+		fmt.Println("  [0] Retour")
+		fmt.Print("  > ")
+
+		var choice int
+		if _, err := fmt.Scanln(&choice); err != nil {
+			fmt.Println("  Choix invalide.")
+			var discard string
+			fmt.Scanln(&discard)
+			continue
+		}
+
+		if choice == 0 {
+			return
+		}
+
+		var category Category
+		switch choice {
+		case 1:
+			category = CombatCategory
+		case 2:
+			category = SurvieCategory
+		case 3:
+			category = TechnologieCategory
+		default:
+			fmt.Println("  Choix incorrect.")
+			continue
+		}
+
+		if !tree.displayCategorySkills(category, points) {
+			fmt.Println("  Retour au menu des compétences.")
+		}
+	}
+}
+
+func (tree *SkillTree) displayCategorySkills(category Category, points *int) bool {
+	skills := tree.GetSkillsByCategory(category)
+	if len(skills) == 0 {
+		fmt.Println("  Aucune compétence dans cette catégorie.")
+		return false
+	}
+
+	for i, skill := range skills {
+		status := "[ ]"
+		if skill.Purchased {
+			status = "[✓]"
+		}
+		prereqText := ""
+		if len(skill.Prerequisites) > 0 {
+			prereqText = " | Prérequis : " + strings.Join(skill.Prerequisites, ", ")
+		}
+		fmt.Printf("  [%d] %s %s - %s%s\n", i+1, status, skill.Name, skill.Bonus, prereqText)
+	}
+	fmt.Println("  [0] Retour")
+	fmt.Print("  Sélection : ")
+
+	var selection int
+	if _, err := fmt.Scanln(&selection); err != nil {
+		fmt.Println("  Entrez un numéro valide.")
+		var discard string
+		fmt.Scanln(&discard)
+		return false
+	}
+
+	if selection == 0 {
+		return false
+	}
+
+	if selection < 1 || selection > len(skills) {
+		fmt.Println("  Numéro invalide.")
+		return false
+	}
+
+	selectedSkill := skills[selection-1]
+	if selectedSkill.Purchased {
+		fmt.Println("  Vous possédez déjà cette compétence.")
+		return true
+	}
+
+	if !tree.HasPrerequisites(selectedSkill.ID) {
+		fmt.Println("  Prérequis manquants pour :", selectedSkill.Name)
+		if len(selectedSkill.Prerequisites) > 0 {
+			fmt.Println("  Il faut d'abord acheter :", strings.Join(selectedSkill.Prerequisites, ", "))
+		}
+		return true
+	}
+
+	if *points < selectedSkill.Cost {
+		fmt.Println("  Pas assez de points de compétence.")
+		return true
+	}
+
+	if tree.BuySkill(selectedSkill.ID, points) {
+		fmt.Println("  Compétence acquise :", selectedSkill.Name)
+		fmt.Println("  Bonus :", selectedSkill.Bonus)
+	} else {
+		fmt.Println("  Achat impossible.")
+	}
+	return true
 }

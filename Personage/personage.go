@@ -40,7 +40,7 @@ func NewPlayer() Player {
 		Level:          1,
 		XP:             0,
 		MaxXP:          100,
-		SkillPoints:    0,
+		SkillPoints:    3,
 		EquippedWeapon: "Aucune",
 		Spells:         []string{"Fireball"},
 		Skills:         competences.NewSkillTree(),
@@ -67,6 +67,13 @@ func (p *Player) BuySkill(skillID string) bool {
 		p.Skills = competences.NewSkillTree()
 	}
 	return p.Skills.BuySkill(skillID, &p.SkillPoints)
+}
+
+func (p *Player) OpenSkillsMenu() {
+	if p.Skills == nil {
+		p.Skills = competences.NewSkillTree()
+	}
+	p.Skills.InteractiveMenu(p.Name, &p.SkillPoints)
 }
 
 func (p Player) DisplayInfo() {
