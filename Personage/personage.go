@@ -3,6 +3,8 @@ package personage
 import (
 	"fmt"
 	"strings"
+
+	competences "projectred/competences"
 )
 
 const (
@@ -25,6 +27,7 @@ type Player struct {
 	SkillPoints    int
 	EquippedWeapon string
 	Spells         []string
+	Skills         *competences.SkillTree
 }
 
 func NewPlayer() Player {
@@ -40,6 +43,7 @@ func NewPlayer() Player {
 		SkillPoints:    0,
 		EquippedWeapon: "Aucune",
 		Spells:         []string{"Fireball"},
+		Skills:         competences.NewSkillTree(),
 	}
 }
 
@@ -56,6 +60,13 @@ func (p *Player) RestoreMana(amount int) {
 	if p.Mana > p.MaxMana {
 		p.Mana = p.MaxMana
 	}
+}
+
+func (p *Player) BuySkill(skillID string) bool {
+	if p.Skills == nil {
+		p.Skills = competences.NewSkillTree()
+	}
+	return p.Skills.BuySkill(skillID, &p.SkillPoints)
 }
 
 func (p Player) DisplayInfo() {
@@ -77,6 +88,10 @@ func (p Player) DisplayInfo() {
 	fmt.Println("  " + dim + "Équipement" + reset)
 	fmt.Println("  Arme équipée        ", p.EquippedWeapon)
 	fmt.Println("  Sorts               ", strings.Join(p.Spells, ", "))
+	fmt.Println()
+	if p.Skills != nil {
+		p.Skills.DisplaySkills()
+	}
 	fmt.Println()
 }
 
