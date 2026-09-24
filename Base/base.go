@@ -6,108 +6,28 @@ import (
 	personage "projectred/Personage"
 )
 
-const (
-	reset  = "\033[0m"
-	bold   = "\033[1m"
-	dim    = "\033[2m"
-	cyan   = "\033[36m"
-	green  = "\033[32m"
-	red    = "\033[31m"
-	yellow = "\033[33m"
-)
-
-const saveFilePath = "savegame.json"
-
 func Menu(player *personage.Player) {
 	for {
-		clearScreen()
-		printTitle()
-		fmt.Println("  ", bold+"MENU PRINCIPAL"+reset)
-		fmt.Println()
-		fmt.Println("  "+cyan+"[1]"+reset, "Nouvelle partie")
-		fmt.Println("  "+cyan+"[2]"+reset, "Compétences")
-		fmt.Println("  "+cyan+"[3]"+reset, "Personnage")
-		fmt.Println("  "+cyan+"[4]"+reset, "Charger une partie")
-		fmt.Println("  "+red+"[5]"+reset, "Quitter")
-		fmt.Println()
-		fmt.Println("  " + dim + "----------------------------------------" + reset)
-		fmt.Print("  " + yellow + "> " + reset)
+		fmt.Println("\n=== LES CENDRES DE L'AUBE ===")
+		fmt.Println("1. Commencer une partie")
+		fmt.Println("2. Voir le personnage")
+		fmt.Println("3. Quitter")
+		fmt.Print("Choix : ")
 
 		var choice int
-		if _, err := fmt.Scanln(&choice); err != nil {
-			fmt.Println(red + "  Entrez un nombre entre 1 et 5." + reset)
-			waitForEnter()
-			continue
-		}
+		fmt.Scanln(&choice)
 
 		switch choice {
 		case 1:
-			NouvellePartie(player)
+			*player = personage.NewPlayer()
+			StartAdventure(player)
 		case 2:
-			player.OpenSkillsMenu()
-		case 3:
 			player.DisplayInfo()
-		case 4:
-			ChargerPartie(player)
-		case 5:
-			fmt.Println(green + "  À bientôt, aventurier." + reset)
+		case 3:
+			fmt.Println("Au revoir !")
 			return
 		default:
-			fmt.Println(red + "  Choix incorrect. Sélectionnez une option de 1 à 5." + reset)
-			waitForEnter()
+			fmt.Println("Choix invalide.")
 		}
 	}
-}
-
-func printTitle() {
-	fmt.Println()
-	fmt.Println("  " + cyan + "╔══════════════════════════════════════╗" + reset)
-	fmt.Println("  " + cyan + "║" + reset + bold + "       LES CENDRES DE L'AUBE       " + reset + cyan + "║" + reset)
-	fmt.Println("  " + cyan + "╚══════════════════════════════════════╝" + reset)
-}
-
-func NouvellePartie(player *personage.Player) {
-	fmt.Println()
-	clearScreen()
-	printSceneHeader("NOUVELLE PARTIE", "Le début de l'aventure")
-	fmt.Println("  Bienvenue,", player.Name+".")
-	*player = personage.NewPlayer()
-	StartAdventure(player)
-}
-
-func ChargerPartie(player *personage.Player) {
-	clearScreen()
-	printSceneHeader("CHARGER UNE PARTIE", "Sauvegarde")
-
-	loaded, err := personage.LoadPlayer(saveFilePath)
-	if err != nil {
-		fmt.Println("  Aucune sauvegarde disponible pour le moment.")
-		waitForEnter()
-		return
-	}
-
-	*player = loaded
-	fmt.Println("  Sauvegarde chargée. Reprise de l'aventure de", player.Name+".")
-	waitForEnter()
-	ResumeAdventure(player)
-}
-
-// saveGame writes the current player state to disk, used as an auto-save checkpoint.
-func saveGame(player *personage.Player) {
-	if err := player.Save(saveFilePath); err != nil {
-		fmt.Println(red + "  Impossible de sauvegarder la partie." + reset)
-	}
-}
-
-func clearScreen() {
-	fmt.Print("\033[2J\033[H")
-}
-
-func printSceneHeader(title string, subtitle string) {
-	fmt.Println()
-	fmt.Println("  " + cyan + "┌──────────────────────────────────────┐" + reset)
-	fmt.Printf("  %s│%s %-36s %s│%s\n", cyan, reset, bold+title+reset, cyan, reset)
-	fmt.Printf("  %s│%s %-36s %s│%s\n", cyan, reset, dim+subtitle+reset, cyan, reset)
-	fmt.Println("  " + cyan + "└──────────────────────────────────────┘" + reset)
-	fmt.Println()
 }
