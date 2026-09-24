@@ -24,7 +24,8 @@ func ouvrirMenuJeu(joueur *personage.Joueur) {
 		fmt.Println("\n=== MENU DU JEU ===")
 		fmt.Println("1. Voir le personnage")
 		fmt.Println("2. Voir l'inventaire")
-		fmt.Println("3. Reprendre la partie")
+		fmt.Println("3. Aller chez le forgeron")
+		fmt.Println("4. Reprendre la partie")
 		fmt.Print("Choix : ")
 
 		var choix int
@@ -36,6 +37,8 @@ func ouvrirMenuJeu(joueur *personage.Joueur) {
 		case 2:
 			joueur.OuvrirInventaire()
 		case 3:
+			ouvrirForgeron(joueur)
+		case 4:
 			return
 		default:
 			fmt.Println("Choix invalide.")

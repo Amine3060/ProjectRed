@@ -12,6 +12,8 @@ type Joueur struct {
 	Or         int
 	Inventaire []string
 	Arme       string
+	Materiaux  map[string]int
+	NiveauEpee int
 }
 
 func NouveauJoueur(nom string, classe string) Joueur {
@@ -21,6 +23,12 @@ func NouveauJoueur(nom string, classe string) Joueur {
 		Or:         0,
 		Inventaire: []string{},
 		Arme:       "Aucune",
+		Materiaux: map[string]int{
+			"Fer":     5,
+			"Cuir":    3,
+			"Charbon": 2,
+		},
+		NiveauEpee: 0,
 	}
 
 	switch classe {

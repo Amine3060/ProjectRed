@@ -50,7 +50,7 @@ func CommencerCombat(joueur *personage.Joueur, ouvrirMenu func(*personage.Joueur
 		case 1:
 			degats := 10
 			if joueur.Arme == personage.ArmeEpee {
-				degats = 20
+				degats = 20 + (joueur.NiveauEpee-1)*5
 			}
 			ennemi.Vie -= degats
 			fmt.Println("Tu infliges", degats, "dégâts.")

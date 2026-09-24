@@ -10,6 +10,7 @@ Petit jeu en ligne de commande écrit en Go.
 - `Base/adventure.go` : contient les scènes de l'aventure.
 - `Base/game_menu.go` : menu accessible pendant l'aventure.
 - `Base/merchant.go` : achats et vente d'objets.
+- `Base/forgeron.go` : fabrication d'armes et d'armures, amélioration de l'épée et gestion des matériaux.
 - `Personage/player.go` : décrit le joueur et ses statistiques.
 - `Personage/inventory.go` : affiche et gère l'inventaire.
 - `Personage/items.go` : contient les noms des objets.
