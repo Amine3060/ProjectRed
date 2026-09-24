@@ -2,7 +2,6 @@ package personage
 
 import "fmt"
 
-// Player contient les informations importantes du personnage.
 type Player struct {
 	Name    string
 	HP      int
