@@ -28,9 +28,9 @@ func ouvrirForgeron(joueur *personage.Joueur) {
 
 		switch choix {
 		case 1:
-			fabriquerArme(joueur)
+			fabriquer(joueur, personage.ArmeEpee, map[string]int{fer: 3, charbon: 1})
 		case 2:
-			fabriquerArmure(joueur)
+			fabriquer(joueur, personage.Armure, map[string]int{fer: 4, cuir: 3})
 		case 3:
 			ameliorerEpee(joueur)
 		case 4:
@@ -43,33 +43,20 @@ func ouvrirForgeron(joueur *personage.Joueur) {
 	}
 }
 
-func fabriquerArme(joueur *personage.Joueur) {
-	if possedeObjetForge(joueur.Inventaire, personage.ArmeEpee) {
-		fmt.Println("Tu possèdes déjà une épée.")
+func fabriquer(joueur *personage.Joueur, objet string, cout map[string]int) {
+	if possedeObjetForge(joueur.Inventaire, objet) {
+		fmt.Println("Tu possèdes déjà", objet+".")
+		return
+	}
+	if !consommerMateriaux(joueur, cout) {
 		return
 	}
 
-	if !consommerMateriaux(joueur, map[string]int{fer: 3, charbon: 1}) {
-		return
+	joueur.Inventaire = append(joueur.Inventaire, objet)
+	if objet == personage.ArmeEpee {
+		joueur.NiveauEpee = 1
 	}
-
-	joueur.Inventaire = append(joueur.Inventaire, personage.ArmeEpee)
-	joueur.NiveauEpee = 1
-	fmt.Println("Tu as fabriqué une épée.")
-}
-
-func fabriquerArmure(joueur *personage.Joueur) {
-	if possedeObjetForge(joueur.Inventaire, personage.Armure) {
-		fmt.Println("Tu possèdes déjà une armure.")
-		return
-	}
-
-	if !consommerMateriaux(joueur, map[string]int{fer: 4, cuir: 3}) {
-		return
-	}
-
-	joueur.Inventaire = append(joueur.Inventaire, personage.Armure)
-	fmt.Println("Tu as fabriqué une armure.")
+	fmt.Println("Tu as fabriqué", objet+".")
 }
 
 func ameliorerEpee(joueur *personage.Joueur) {
