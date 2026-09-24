@@ -2,6 +2,7 @@ package zone
 
 import (
 	"fmt"
+	"math/rand"
 
 	personage "projectred/Personage"
 )
@@ -39,9 +40,15 @@ func miner(joueur *personage.Joueur) {
 	joueur.Materiaux[fer] += 2
 	joueur.Materiaux[charbon]++
 	fmt.Println("Tu as extrait 2 Fer et 1 Charbon.")
+
+	if rand.Intn(10) == 0 {
+		joueur.Or++
+		fmt.Println("Tu as trouvé 1 pièce d'or !")
+	}
 }
 
 func afficherMateriaux(joueur *personage.Joueur) {
 	fmt.Println("Fer :", joueur.Materiaux[fer])
 	fmt.Println("Charbon :", joueur.Materiaux[charbon])
+	fmt.Println("Or :", joueur.Or)
 }
