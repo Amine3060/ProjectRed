@@ -2,59 +2,71 @@ package combat
 
 import (
 	"fmt"
-	"math/rand"
 
 	personage "projectred/Personage"
 )
 
-type Monster struct {
-	Name   string
-	HP     int
-	Attack int
+type Ennemi struct {
+	Nom     string
+	Vie     int
+	Attaque int
 }
 
-func WarriorFight(player *personage.Player) {
+func CombatGuerrier(joueur *personage.Joueur, ouvrirMenu func(*personage.Joueur)) {
 	fmt.Println("\n=== PREMIER COMBAT ===")
 	fmt.Println("Le guerrier est trop fort. Krag est vaincu.")
-	player.HP = 0
-	fmt.Println("PV de", player.Name, ":", player.HP)
-	waitForEnter()
+	joueur.PointsVie = 0
+	fmt.Println("PV de", joueur.Nom, ":", joueur.PointsVie)
+	attendreEntree(joueur, ouvrirMenu)
 }
 
-func StartFight(player *personage.Player) {
-	enemy := Monster{
-		Name:   "Soldat ennemi",
-		HP:     40,
-		Attack: 8,
+func CommencerCombat(joueur *personage.Joueur, ouvrirMenu func(*personage.Joueur)) {
+	ennemi := Ennemi{
+		Nom:     "Soldat ennemi",
+		Vie:     40,
+		Attaque: 8,
 	}
+	toursPoison := 0
 
 	fmt.Println("\n=== SECOND COMBAT ===")
-	fmt.Println("Un", enemy.Name, "attaque !")
+	fmt.Println("Un", ennemi.Nom, "attaque !")
 
-	for player.HP > 0 && enemy.HP > 0 {
-		fmt.Println("\nTes PV :", player.HP, "| PV ennemi :", enemy.HP)
+	for joueur.PointsVie > 0 && ennemi.Vie > 0 {
+		fmt.Println("\nTes PV :", joueur.PointsVie, "| PV ennemi :", ennemi.Vie)
 		fmt.Println("1. Attaquer")
 		fmt.Println("2. Lancer Fireball (10 mana)")
-		fmt.Println("3. Fuir")
+		fmt.Println("3. Utiliser une potion")
+		fmt.Println("4. Fuir")
+		fmt.Println("0. Ouvrir le menu")
 		fmt.Print("Choix : ")
 
-		var choice int
-		fmt.Scanln(&choice)
+		var choix int
+		fmt.Scanln(&choix)
 
-		switch choice {
+		switch choix {
+		case 0:
+			ouvrirMenu(joueur)
+			continue
 		case 1:
-			damage := rand.Intn(11) + 10
-			enemy.HP -= damage
-			fmt.Println("Tu infliges", damage, "dégâts.")
+			degats := 10
+			if joueur.Arme == personage.ArmeEpee {
+				degats = 20
+			}
+			ennemi.Vie -= degats
+			fmt.Println("Tu infliges", degats, "dégâts.")
 		case 2:
-			if player.UseMana(10) {
-				enemy.HP -= 25
+			if joueur.UtiliserMana(10) {
+				ennemi.Vie -= 25
 				fmt.Println("Fireball inflige 25 dégâts.")
 			} else {
 				fmt.Println("Tu n'as pas assez de mana.")
 				continue
 			}
 		case 3:
+			if !utiliserPotion(joueur, &ennemi, &toursPoison) {
+				continue
+			}
+		case 4:
 			fmt.Println("Tu prends la fuite.")
 			return
 		default:
@@ -62,25 +74,41 @@ func StartFight(player *personage.Player) {
 			continue
 		}
 
-		if enemy.HP <= 0 {
+		if ennemi.Vie <= 0 {
 			break
 		}
 
-		player.HP -= enemy.Attack
-		fmt.Println("L'ennemi inflige", enemy.Attack, "dégâts.")
+		if toursPoison > 0 {
+			ennemi.Vie -= 15
+			toursPoison--
+			fmt.Println("Le poison inflige 15 dégâts.")
+		}
+
+		if ennemi.Vie <= 0 {
+			break
+		}
+
+		joueur.PointsVie -= ennemi.Attaque
+		fmt.Println("L'ennemi inflige", ennemi.Attaque, "dégâts.")
 	}
 
-	if player.HP <= 0 {
+	if joueur.PointsVie <= 0 {
 		fmt.Println("Tu as perdu le combat.")
 	} else {
-		player.Gold += 100
+		joueur.Or += 100
+		joueur.Inventaire = append(joueur.Inventaire, personage.ArmeEpee)
 		fmt.Println("Tu as gagné ! Tu trouves 100 pièces d'or.")
+		fmt.Println("Le soldat laisse tomber une épée.")
 	}
 
-	waitForEnter()
+	attendreEntree(joueur, ouvrirMenu)
 }
 
-func waitForEnter() {
-	fmt.Println("Appuie sur Entrée pour continuer.")
-	fmt.Scanln()
+func attendreEntree(joueur *personage.Joueur, ouvrirMenu func(*personage.Joueur)) {
+	fmt.Println("Appuie sur Entrée pour continuer ou tape 0 pour ouvrir le menu.")
+	var choix string
+	fmt.Scanln(&choix)
+	if choix == "0" {
+		ouvrirMenu(joueur)
+	}
 }

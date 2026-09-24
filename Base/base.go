@@ -6,7 +6,7 @@ import (
 	personage "projectred/Personage"
 )
 
-func Menu(player *personage.Player) {
+func Menu(joueur *personage.Joueur) {
 	for {
 		fmt.Println("\n=== LES CENDRES DE L'AUBE ===")
 		fmt.Println("1. Commencer une partie")
@@ -14,15 +14,15 @@ func Menu(player *personage.Player) {
 		fmt.Println("3. Quitter")
 		fmt.Print("Choix : ")
 
-		var choice int
-		fmt.Scanln(&choice)
+		var choix int
+		fmt.Scanln(&choix)
 
-		switch choice {
+		switch choix {
 		case 1:
-			*player = personage.NewPlayer()
-			StartAdventure(player)
+			*joueur = creerJoueur()
+			StartAdventure(joueur)
 		case 2:
-			player.DisplayInfo()
+			joueur.AfficherInfos()
 		case 3:
 			fmt.Println("Au revoir !")
 			return

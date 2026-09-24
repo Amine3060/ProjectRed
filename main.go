@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	player := personage.NewPlayer()
-	base.Menu(&player)
+	joueur := personage.NouveauJoueur("Krag", "Humain")
+	base.Menu(&joueur)
 }

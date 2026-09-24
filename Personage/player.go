@@ -2,39 +2,61 @@ package personage
 
 import "fmt"
 
-type Player struct {
-	Name    string
-	HP      int
-	MaxHP   int
-	Mana    int
-	MaxMana int
-	Gold    int
+type Joueur struct {
+	Nom        string
+	Classe     string
+	PointsVie  int
+	VieMax     int
+	Mana       int
+	ManaMax    int
+	Or         int
+	Inventaire []string
+	Arme       string
 }
 
-func NewPlayer() Player {
-	return Player{
-		Name:    "Krag",
-		HP:      100,
-		MaxHP:   100,
-		Mana:    50,
-		MaxMana: 50,
-		Gold:    0,
+func NouveauJoueur(nom string, classe string) Joueur {
+	joueur := Joueur{
+		Nom:        nom,
+		Classe:     classe,
+		Or:         0,
+		Inventaire: []string{},
+		Arme:       "Aucune",
 	}
+
+	switch classe {
+	case "Elfe":
+		joueur.VieMax = 90
+		joueur.ManaMax = 80
+	case "Gobelin":
+		joueur.VieMax = 120
+		joueur.ManaMax = 30
+	default:
+		joueur.Classe = "Humain"
+		joueur.VieMax = 100
+		joueur.ManaMax = 50
+	}
+
+	joueur.PointsVie = joueur.VieMax
+	joueur.Mana = joueur.ManaMax
+	return joueur
 }
 
-func (player *Player) UseMana(amount int) bool {
-	if player.Mana < amount {
+func (joueur *Joueur) UtiliserMana(quantite int) bool {
+	if joueur.Mana < quantite {
 		return false
 	}
 
-	player.Mana -= amount
+	joueur.Mana -= quantite
 	return true
 }
 
-func (player Player) DisplayInfo() {
+func (joueur Joueur) AfficherInfos() {
 	fmt.Println("\n=== PERSONNAGE ===")
-	fmt.Println("Nom :", player.Name)
-	fmt.Println("PV :", player.HP, "/", player.MaxHP)
-	fmt.Println("Mana :", player.Mana, "/", player.MaxMana)
-	fmt.Println("Or :", player.Gold)
+	fmt.Println("Nom :", joueur.Nom)
+	fmt.Println("Classe :", joueur.Classe)
+	fmt.Println("PV :", joueur.PointsVie, "/", joueur.VieMax)
+	fmt.Println("Mana :", joueur.Mana, "/", joueur.ManaMax)
+	fmt.Println("Or :", joueur.Or)
+	fmt.Println("Inventaire :", joueur.Inventaire)
+	fmt.Println("Arme équipée :", joueur.Arme)
 }
