@@ -88,8 +88,9 @@ func CommencerCombat(joueur *personage.Joueur, ouvrirMenu func(*personage.Joueur
 			break
 		}
 
-		joueur.PointsVie -= ennemi.Attaque
-		fmt.Println("L'ennemi inflige", ennemi.Attaque, "dégâts.")
+		degatsRecus := joueur.DegatsRecus(ennemi.Attaque)
+		joueur.PointsVie -= degatsRecus
+		fmt.Println("L'ennemi inflige", degatsRecus, "dégâts.")
 	}
 
 	if joueur.PointsVie <= 0 {

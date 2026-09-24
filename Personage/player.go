@@ -3,17 +3,18 @@ package personage
 import "fmt"
 
 type Joueur struct {
-	Nom        string
-	Classe     string
-	PointsVie  int
-	VieMax     int
-	Mana       int
-	ManaMax    int
-	Or         int
-	Inventaire []string
-	Arme       string
-	Materiaux  map[string]int
-	NiveauEpee int
+	Nom           string
+	Classe        string
+	PointsVie     int
+	VieMax        int
+	Mana          int
+	ManaMax       int
+	Or            int
+	Inventaire    []string
+	Arme          string
+	ArmureEquipee bool
+	Materiaux     map[string]int
+	NiveauEpee    int
 }
 
 func NouveauJoueur(nom string, classe string) Joueur {
@@ -56,6 +57,13 @@ func (joueur *Joueur) UtiliserMana(quantite int) bool {
 
 	joueur.Mana -= quantite
 	return true
+}
+
+func (joueur Joueur) DegatsRecus(degats int) int {
+	if joueur.ArmureEquipee {
+		degats = degats * 75 / 100
+	}
+	return degats
 }
 
 func (joueur Joueur) AfficherInfos() {

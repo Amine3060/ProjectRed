@@ -14,10 +14,12 @@ func (joueur *Joueur) OuvrirInventaire() {
 		}
 
 		fmt.Println("Arme équipée :", joueur.Arme)
+		fmt.Println("Armure équipée :", joueur.ArmureEquipee)
 		fmt.Println("1. Équiper l'épée")
-		fmt.Println("2. Utiliser une potion de soins")
-		fmt.Println("3. Voir l'utilisation de la potion de poison")
-		fmt.Println("4. Retour")
+		fmt.Println("2. Équiper l'armure")
+		fmt.Println("3. Utiliser une potion de soins")
+		fmt.Println("4. Voir l'utilisation de la potion de poison")
+		fmt.Println("5. Retour")
 		fmt.Print("Choix : ")
 
 		var choix int
@@ -32,14 +34,21 @@ func (joueur *Joueur) OuvrirInventaire() {
 			joueur.Arme = ArmeEpee
 			fmt.Println("Épée équipée.")
 		case 2:
-			utiliserPotionSoins(joueur)
+			if !possedeObjet(joueur.Inventaire, Armure) {
+				fmt.Println("Tu ne possèdes pas d'armure.")
+				continue
+			}
+			joueur.ArmureEquipee = true
+			fmt.Println("Armure équipée.")
 		case 3:
+			utiliserPotionSoins(joueur)
+		case 4:
 			if possedeObjet(joueur.Inventaire, PotionPoison) {
 				fmt.Println("La potion de poison s'utilise pendant un combat.")
 			} else {
 				fmt.Println("Tu ne possèdes pas de potion de poison.")
 			}
-		case 4:
+		case 5:
 			return
 		default:
 			fmt.Println("Choix invalide.")
