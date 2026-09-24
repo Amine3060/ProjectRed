@@ -37,11 +37,11 @@ func OuvrirZoneMiniere(joueur *personage.Joueur) {
 }
 
 func miner(joueur *personage.Joueur) {
-	joueur.Materiaux[fer] += 2
-	joueur.Materiaux[charbon]++
-	fmt.Println("Tu as extrait 2 Fer et 1 Charbon.")
+	joueur.Materiaux[fer] += 3
+	joueur.Materiaux[charbon] += 10
+	fmt.Println("Tu as extrait 3 Fer et 10 Charbon.")
 
-	if rand.Intn(10) == 0 {
+	if rand.Intn(2) == 0 {
 		joueur.Or++
 		fmt.Println("Tu as trouvé 1 pièce d'or !")
 	}
