@@ -6,6 +6,7 @@ import (
 	"os"
 
 	personage "projectred/Personage"
+	zone "projectred/zone"
 )
 
 func attendreEntree(joueur *personage.Joueur) {
@@ -25,7 +26,8 @@ func ouvrirMenuJeu(joueur *personage.Joueur) {
 		fmt.Println("1. Voir le personnage")
 		fmt.Println("2. Voir l'inventaire")
 		fmt.Println("3. Aller chez le forgeron")
-		fmt.Println("4. Reprendre la partie")
+		fmt.Println("4. Aller dans la zone minière")
+		fmt.Println("5. Reprendre la partie")
 		fmt.Print("Choix : ")
 
 		var choix int
@@ -39,6 +41,8 @@ func ouvrirMenuJeu(joueur *personage.Joueur) {
 		case 3:
 			ouvrirForgeron(joueur)
 		case 4:
+			zone.OuvrirZoneMiniere(joueur)
+		case 5:
 			return
 		default:
 			fmt.Println("Choix invalide.")
